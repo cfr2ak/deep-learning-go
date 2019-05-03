@@ -110,12 +110,22 @@ class Board:
 
         new_string = GoString(player, [point], point_info['liberties'])
 
+        self._merge_with_adjacent_same_string(new_string, point_info)
+        self._remove_liberty_of_opposite_string(point, point_info)
+        self._remove_string_with_zero_liberty(point_info)
+
+    def _merge_with_adjacent_same_string(self, new_string, point_info):
         for same_color_string in point_info['adjacent_same_color']:
             new_string = new_string.merged_with(same_color_string)
         for new_string_point in new_string.stones:
             self._grid[new_string_point] = new_string
+
+    @staticmethod
+    def _remove_liberty_of_opposite_string(point, point_info):
         for other_color_string in point_info['adjacent_opposite_color']:
             other_color_string.remove_liberty(point)
+
+    def _remove_string_with_zero_liberty(self, point_info):
         for other_color_string in point_info['adjacent_opposite_color']:
             if other_color_string.num_liberties == 0:
                 self._remove_string(other_color_string)
