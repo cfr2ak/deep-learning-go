@@ -61,30 +61,48 @@ class Board:
         self.num_cols = num_cols
         self._grid = {}
 
+    def _is_point_on_grid(self, point):
+        if self.is_on_grid(point):
+            return True
+        else:
+            return False
+
     def _check_point_validity(self, point):
         assert self.is_on_grid(point)
         assert self._grid.get(point) is None
 
+    def _update_neighbor_point(self, player, neighbor, point_info):
+        neighbor_string = self._grid.get(neighbor)
+        if neighbor_string is None:
+            point_info['liberties'].append(neighbor)
+        elif neighbor_string.color == player:
+            self._append_same_color_neighbor(neighbor_string, point_info['adjacent_same_color'])
+        else:
+            self._append_opposite_color_neighbor(neighbor_string, point_info['adjacent_opposite_color'])
+
+    @staticmethod
+    def _append_same_color_neighbor(neighbor_string, adjacent_same_color):
+        if neighbor_string not in adjacent_same_color:
+            adjacent_same_color.append(neighbor_string)
+
+    @staticmethod
+    def _append_opposite_color_neighbor(neighbor_string, adjacent_opposite_color):
+        if neighbor_string not in adjacent_opposite_color:
+            adjacent_opposite_color.append(neighbor_string)
 
     def place_stone(self, player, point):
         self._check_point_validity(point)
-        adjacent_same_color = []
-        adjacent_opposite_color = []
-        liberties = []
+        point_info = {
+            'adjacent_same_color': [],
+            'adjacent_opposite_color': [],
+            'liberties': []
+        }
 
         for neighbor in point.neighbors():
-            if not self.is_on_grid(neighbor):
+            if not self._is_point_on_grid(neighbor):
                 continue
-            neighbor_string = self._grid.get(neighbor)
-            if neighbor_string is None:
-                liberties.append(neighbor)
-            elif neighbor_string.color == player:
-                if neighbor_string not in adjacent_same_color:
-                    adjacent_same_color.append(neighbor_string)
-            else:
-                if neighbor_string not in adjacent_opposite_color:
-                    adjacent_opposite_color.append(neighbor_string)
+            self._update_neighbor_point(player, neighbor, point_info)
 
-        new_string = GoString(player, [point], liberties)
+        new_string = GoString(player, [point], point_info['liberties'])
 
 
