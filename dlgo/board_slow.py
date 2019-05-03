@@ -130,4 +130,14 @@ class Board:
             if other_color_string.num_liberties == 0:
                 self._remove_string(other_color_string)
 
+    def _remove_string(self, string):
+        for point in string.stones:
+            for neighbor in point.neighbors():
+                neighbor_string = self._grid.get(neighbor)
+                if neighbor_string is None:
+                    continue
+                if neighbor_string is not string:
+                    neighbor_string.add_liberty(point)
+            self._grid[point] = None
+
 
