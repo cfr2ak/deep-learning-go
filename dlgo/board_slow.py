@@ -76,19 +76,14 @@ class Board:
         if neighbor_string is None:
             point_info['liberties'].append(neighbor)
         elif neighbor_string.color == player:
-            self._append_same_color_neighbor(neighbor_string, point_info['adjacent_same_color'])
+            self._append_neighbor(neighbor_string, point_info['adjacent_same_color'])
         else:
-            self._append_opposite_color_neighbor(neighbor_string, point_info['adjacent_opposite_color'])
+            self._append_neighbor(neighbor_string, point_info['adjacent_opposite_color'])
 
     @staticmethod
-    def _append_same_color_neighbor(neighbor_string, adjacent_same_color):
-        if neighbor_string not in adjacent_same_color:
-            adjacent_same_color.append(neighbor_string)
-
-    @staticmethod
-    def _append_opposite_color_neighbor(neighbor_string, adjacent_opposite_color):
-        if neighbor_string not in adjacent_opposite_color:
-            adjacent_opposite_color.append(neighbor_string)
+    def _append_neighbor(neighbor_string, adjacent_list):
+        if neighbor_string not in adjacent_list:
+            adjacent_list.append(neighbor_string)
 
     def place_stone(self, player, point):
         self._check_point_validity(point)
