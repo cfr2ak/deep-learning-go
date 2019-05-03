@@ -61,6 +61,25 @@ class Board:
         self.num_cols = num_cols
         self._grid = {}
 
+    def place_stone(self, player, point):
+        self._check_point_validity(point)
+        point_info = {
+            'adjacent_same_color': [],
+            'adjacent_opposite_color': [],
+            'liberties': []
+        }
+
+        for neighbor in point.neighbors():
+            if not self._is_point_on_grid(neighbor):
+                continue
+            self._update_point_info(player, neighbor, point_info)
+
+        new_string = GoString(player, [point], point_info['liberties'])
+
+        self._merge_with_adjacent_same_string(new_string, point_info)
+        self._remove_liberty_of_opposite_string(point, point_info)
+        self._remove_string_with_zero_liberty(point_info)
+
     def _is_point_on_grid(self, point):
         return 1 <= point.row <= self.num_rows and \
             1 <= point.col <= self.num_cols
@@ -94,25 +113,6 @@ class Board:
     def _append_neighbor(neighbor_string, adjacent_list):
         if neighbor_string not in adjacent_list:
             adjacent_list.append(neighbor_string)
-
-    def place_stone(self, player, point):
-        self._check_point_validity(point)
-        point_info = {
-            'adjacent_same_color': [],
-            'adjacent_opposite_color': [],
-            'liberties': []
-        }
-
-        for neighbor in point.neighbors():
-            if not self._is_point_on_grid(neighbor):
-                continue
-            self._update_point_info(player, neighbor, point_info)
-
-        new_string = GoString(player, [point], point_info['liberties'])
-
-        self._merge_with_adjacent_same_string(new_string, point_info)
-        self._remove_liberty_of_opposite_string(point, point_info)
-        self._remove_string_with_zero_liberty(point_info)
 
     def _merge_with_adjacent_same_string(self, new_string, point_info):
         for same_color_string in point_info['adjacent_same_color']:
