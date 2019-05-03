@@ -81,7 +81,7 @@ class Board:
         assert self._is_point_on_grid(point)
         assert self._grid.get(point) is None
 
-    def _update_neighbor_point_info(self, player, neighbor, point_info):
+    def _update_point_info(self, player, neighbor, point_info):
         neighbor_string = self._grid.get(neighbor)
         if neighbor_string is None:
             point_info['liberties'].append(neighbor)
@@ -106,7 +106,7 @@ class Board:
         for neighbor in point.neighbors():
             if not self._is_point_on_grid(neighbor):
                 continue
-            self._update_neighbor_point_info(player, neighbor, point_info)
+            self._update_point_info(player, neighbor, point_info)
 
         new_string = GoString(player, [point], point_info['liberties'])
 
