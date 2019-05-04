@@ -70,7 +70,7 @@ class Board:
         }
 
         for neighbor in point.neighbors():
-            if not self._is_point_on_grid(neighbor):
+            if not self.is_point_on_grid(neighbor):
                 continue
             self._update_point_info(player, neighbor, point_info)
 
@@ -80,7 +80,7 @@ class Board:
         self._remove_liberty_of_opposite_string(point, point_info)
         self._remove_string_with_zero_liberty(point_info)
 
-    def _is_point_on_grid(self, point):
+    def is_point_on_grid(self, point):
         return 1 <= point.row <= self.num_rows and \
             1 <= point.col <= self.num_cols
 
@@ -97,7 +97,7 @@ class Board:
         return string
 
     def _check_point_validity(self, point):
-        assert self._is_point_on_grid(point)
+        assert self.is_point_on_grid(point)
         assert self._grid.get(point) is None
 
     def _update_point_info(self, player, neighbor, point_info):
