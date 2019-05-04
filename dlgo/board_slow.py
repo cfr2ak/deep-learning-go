@@ -154,8 +154,7 @@ class GameState:
         :return: new GameState after applying the move
         """
         if move.is_play:
-            next_board = copy.deepcopy(self.board)
-            next_board.place_stone(self.next_player, move.point)
+            next_board = self._get_next_board(move, self.next_player)
         else:
             next_board = self.board
 
@@ -181,4 +180,16 @@ class GameState:
             return True
 
         return self._does_both_sides_passed()
+
+    def is_move_self_capture(self, player, move):
+        if not move.is_play:
+            return False
+        next_board = self._get_next_board(move, player)
+        new_string = next_board.get_go_string(move.point)
+        return new_string.num_liberties == 0
+
+    def _get_next_board(self, move, player):
+        next_board = copy.deepcopy(self.board)
+        next_board.place_stone(player, move.point)
+        return next_board
 
