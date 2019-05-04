@@ -193,3 +193,23 @@ class GameState:
         next_board.place_stone(player, move.point)
         return next_board
 
+    @property
+    def state(self):
+        return self.next_player, self.board
+
+    def does_move_violate_ko(self, player, move):
+        if not move.is_play:
+            return False
+        next_board = self._get_next_board(move, player)
+        next_state = player.other, next_board
+        past_state = self.previous_state
+        return self._check_state_exist_ever_before(next_state, past_state)
+
+    @staticmethod
+    def _check_state_exist_ever_before(next_state, past_state):
+        while past_state is not None:
+            if past_state.state == next_state:
+                return True
+            past_state = past_state.previous_state
+        return False
+
