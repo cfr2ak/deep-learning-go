@@ -141,3 +141,44 @@ class Board:
             self._grid[point] = None
 
 
+class GameState:
+    def __init__(self, board, next_player, previous_state, last_move):
+        self.board = board
+        self.next_player = next_player
+        self.previous_state = previous_state
+        self.last_move = last_move
+
+    def apply_move(self, move):
+        """
+        :param move: move applied to Board
+        :return: new GameState after applying the move
+        """
+        if move.is_play:
+            next_board = copy.deepcopy(self.board)
+            next_board.place_stone(self.next_player, move.point)
+        else:
+            next_board = self.board
+
+        return GameState(next_board, self.next_player.other, self, move)
+
+    @classmethod
+    def new_game(cls, board_size):
+        if isinstance(board_size, int):
+            board_size = (board_size, board_size)
+        board = Board(*board_size)
+        return GameState(board, Player.black, None, None)
+
+    def _does_both_sides_passed(self):
+        second_last_move = self.previous_state.last_move
+        if second_last_move is None:
+            return False
+        return self.last_move.is_pass and second_last_move.is_pass
+
+    def is_over(self):
+        if self.last_move is None:
+            return False
+        if self.last_move.is_resign:
+            return True
+
+        return self._does_both_sides_passed()
+
