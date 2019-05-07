@@ -166,6 +166,13 @@ class GameState:
         self.board = board
         self.next_player = next_player
         self.previous_state = previous_state
+        if self.previous_state is None:
+            self.previous_state = frozenset()
+        else:
+            self.previous_state = frozenset(
+                previous_state.previous_states |
+                {(previous_state.next_player, previous_state.board.zobrist_hash())}
+            )
         self.last_move = last_move
 
     def apply_move(self, move):
@@ -221,9 +228,8 @@ class GameState:
         if not move.is_play:
             return False
         next_board = self._get_next_board(move, player)
-        next_state = player.other, next_board
-        past_state = self.previous_state
-        return self._check_state_exist_ever_before(next_state, past_state)
+        next_state = player.other, next_board.zobrist_hash()
+        return next_state in self.previous_state
 
     @staticmethod
     def _check_state_exist_ever_before(next_state, past_state):
