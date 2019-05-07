@@ -1,5 +1,6 @@
 import copy
 from dlgo.types import Player
+from dlgo import zobrist_hash
 
 
 class Move:
@@ -62,6 +63,7 @@ class Board:
         self.num_rows = num_rows
         self.num_cols = num_cols
         self._grid = {}
+        self._hash = zobrist_hash.EMPTY_BOARD
 
     def place_stone(self, player, point):
         self._check_point_validity(point)
@@ -79,8 +81,34 @@ class Board:
         new_string = GoString(player, [point], point_info['liberties'])
 
         self._merge_with_adjacent_same_string(new_string, point_info)
-        self._remove_liberty_of_opposite_string(point, point_info)
-        self._remove_string_with_zero_liberty(point_info)
+
+        self._hash ^= zobrist_hash.HASH_CODE[point, player]
+
+        for other_color_string in point_info['adjacent_opposite_color']:
+            replacement = other_color_string.without_liberty(point)
+            if replacement.num_liberties:
+                self._replace_string(other_color_string.without_liberty(point))
+            else:
+                self._remove_string(other_color_string)
+
+    def _replace_string(self, new_string):
+        for point in new_string.stones:
+            self._grid[point] = new_string
+
+    def _remove_string(self, string):
+        for point in string.stones:
+            for neighbor in point.neighbors():
+                neighbor_string = self._grid.get(neighbor)
+                if neighbor_string is None:
+                    continue
+                if neighbor_string is not string:
+                    self._replace_string(neighbor_string.with_liberty(point))
+            self._grid[point] = None
+
+            self._hash ^= zobrist_hash.HASH_CODE[point, string.color]
+
+    def zobrist_hash(self):
+        return self._hash
 
     def is_point_on_grid(self, point):
         return 1 <= point.row <= self.num_rows and \
@@ -121,16 +149,6 @@ class Board:
             new_string = new_string.merged_with(same_color_string)
         for new_string_point in new_string.stones:
             self._grid[new_string_point] = new_string
-
-    @staticmethod
-    def _remove_liberty_of_opposite_string(point, point_info):
-        for other_color_string in point_info['adjacent_opposite_color']:
-            other_color_string.remove_liberty(point)
-
-    def _remove_string_with_zero_liberty(self, point_info):
-        for other_color_string in point_info['adjacent_opposite_color']:
-            if other_color_string.num_liberties == 0:
-                self._remove_string(other_color_string)
 
     def _remove_string(self, string):
         for point in string.stones:
