@@ -5,7 +5,7 @@ randomly select any valid move that doesn't fill in one of its own eyes
 
 import random
 from dlgo.agent.base import Agent
-from dlgo.agent.utils import is_point_and_eye
+from dlgo.agent.helper import is_point_and_eye
 from dlgo.board_slow import Move
 from dlgo.types import Point
 
