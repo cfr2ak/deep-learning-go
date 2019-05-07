@@ -150,16 +150,6 @@ class Board:
         for new_string_point in new_string.stones:
             self._grid[new_string_point] = new_string
 
-    def _remove_string(self, string):
-        for point in string.stones:
-            for neighbor in point.neighbors():
-                neighbor_string = self._grid.get(neighbor)
-                if neighbor_string is None:
-                    continue
-                if neighbor_string is not string:
-                    neighbor_string.add_liberty(point)
-            self._grid[point] = None
-
 
 class GameState:
     def __init__(self, board, next_player, previous_state, last_move):
@@ -167,9 +157,9 @@ class GameState:
         self.next_player = next_player
         self.previous_state = previous_state
         if self.previous_state is None:
-            self.previous_state = frozenset()
+            self.previous_states = frozenset()
         else:
-            self.previous_state = frozenset(
+            self.previous_states = frozenset(
                 previous_state.previous_states |
                 {(previous_state.next_player, previous_state.board.zobrist_hash())}
             )
@@ -229,7 +219,7 @@ class GameState:
             return False
         next_board = self._get_next_board(move, player)
         next_state = player.other, next_board.zobrist_hash()
-        return next_state in self.previous_state
+        return next_state in self.previous_states
 
     @staticmethod
     def _check_state_exist_ever_before(next_state, past_state):
