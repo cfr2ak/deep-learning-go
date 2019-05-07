@@ -26,14 +26,16 @@ class Move:
 class GoString:
     def __init__(self, color, stones, liberties):
         self.color = color
-        self.stones = set(stones)
-        self.liberties = set(liberties)
+        self.stones = frozenset(stones)
+        self.liberties = frozenset(liberties)
 
-    def remove_liberty(self, point):
-        self.liberties.remove(point)
+    def without_liberty(self, point):
+        new_liberties = self.liberties - {point}
+        return GoString(self.color, self.stones, new_liberties)
 
-    def add_liberty(self, point):
-        self.liberties.add(point)
+    def with_liberty(self, point):
+        new_liberties = self.liberties | {point}
+        return GoString(self.color, self.stones, new_liberties)
 
     def merged_with(self, go_string):
         assert go_string.color == self.color
