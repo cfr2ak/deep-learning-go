@@ -84,13 +84,13 @@ class Board:
         return 1 <= point.row <= self.num_rows and \
             1 <= point.col <= self.num_cols
 
-    def _get_color_on_point(self, point):
+    def get_color_on_point(self, point):
         string = self._grid.get(point)
         if string is None:
             return None
         return string.color
 
-    def _get_go_string_on_point(self, point):
+    def get_go_string_on_point(self, point):
         string = self._grid.get(point)
         if string is None:
             return None
@@ -185,7 +185,7 @@ class GameState:
         if not move.is_play:
             return False
         next_board = self._get_next_board(move, player)
-        new_string = next_board.get_go_string(move.point)
+        new_string = next_board.get_go_string_on_point(move.point)
         return new_string.num_liberties == 0
 
     def _get_next_board(self, move, player):
@@ -219,7 +219,7 @@ class GameState:
         if move.is_pass or move.is_resign:
             return True
         return (
-            self.board.get(move.point) is not None and
+            self.board.get_color_on_point(move.point) is None and
             not self.is_move_self_capture(self.next_player, move) and
             not self.does_move_violate_ko(self.next_player, move)
         )

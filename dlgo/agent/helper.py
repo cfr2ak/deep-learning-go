@@ -1,13 +1,13 @@
 from dlgo.types import Point
 
 
-def is_point_and_eye(board, point, color):
-    if board.get(point) is not None:
+def is_point_an_eye(board, point, color):
+    if board.get_color_on_point(point) is not None:
         return False
 
     for neighbor in point.neighbors():
         if board.is_point_on_grid(neighbor):
-            neighbor_color = board.get(neighbor)
+            neighbor_color = board.get_color_on_point(neighbor)
             if neighbor_color is not color:
                 return False
 
@@ -23,7 +23,7 @@ def is_point_and_eye(board, point, color):
 
     for corner in corners:
         if board.is_point_on_grid(corner):
-            corner_color = board.get(corner)
+            corner_color = board.get_color_on_point(corner)
             if corner_color == color:
                 friendly_corners += 1
         else:
@@ -31,6 +31,5 @@ def is_point_and_eye(board, point, color):
 
     if off_board_corners > 0:
         return off_board_corners + friendly_corners == 4
-    else:
-        return friendly_corners >= 3
+    return friendly_corners >= 3
 
