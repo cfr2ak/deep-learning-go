@@ -33,3 +33,21 @@ class MCTSNode(object):
         return float(self.win_counts[player]) / float(self.num_rollouts)
 
 
+class MCTSAgent(Agent):
+    def select_move(self, game_state):
+        root_node = MCTSNode(game_state)
+
+        for i in range(self.num_rounds):
+            node = root_node
+            while (not node.can_add_child()) and (not node.is_terminal()):
+                node = self.select_child(node)
+
+            if node.can_add_child():
+                node = node.get_random_children()
+
+            winner = self.simulate_random_game(node.game_state)
+
+            while node is not None:
+                node.record_win(winner)
+                node = node.parent
+
