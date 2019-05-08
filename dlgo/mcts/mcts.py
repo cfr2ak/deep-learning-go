@@ -1,3 +1,9 @@
+import math
+import random
+
+from dlgo import agent
+
+
 class MCTSNode(object):
     def __init__(self, game_state, parent=None, move=None):
         self.game_state = game_state
@@ -33,7 +39,7 @@ class MCTSNode(object):
         return float(self.win_counts[player]) / float(self.num_rollouts)
 
 
-class MCTSAgent(Agent):
+class MCTSAgent(agent.Agent):
     def select_move(self, game_state):
         root_node = MCTSNode(game_state)
 
