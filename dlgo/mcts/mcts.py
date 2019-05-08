@@ -57,3 +57,13 @@ class MCTSAgent(agent.Agent):
                 node.record_win(winner)
                 node = node.parent
 
+        best_move = None
+        best_pct = -1.0
+        for child in root_node.children:
+            child_pct = child.winning_frac(game_state.next_player)
+            if child_pct > best_pct:
+                best_pct = child_pct
+                best_move = child.move
+
+        return best_move
+
