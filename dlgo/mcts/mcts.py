@@ -40,6 +40,11 @@ class MCTSNode(object):
 
 
 class MCTSAgent(agent.Agent):
+    def __init__(self, num_rounds,  temperature):
+        agent.Agent.__init__(self)
+        self.num_rounds = num_rounds
+        self.temperature = temperature
+
     def select_move(self, game_state):
         root_node = MCTSNode(game_state)
 
@@ -66,4 +71,14 @@ class MCTSAgent(agent.Agent):
                 best_move = child.move
 
         return best_move
+
+    def select_child(self, node):
+        total_rollouts = sum(child.num)
+
+
+def uct_score(parent_rollouts, child_rollouts, win_pct, temperature):
+    exploration = math.sqrt(math.log(parent_rollouts) / child_rollouts)
+    return win_pct + temperature * exploration
+
+
 
