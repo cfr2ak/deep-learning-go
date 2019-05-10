@@ -34,3 +34,12 @@ def point_from_coords(coord):
     row = int(coord[1:])
     return types.Point(row=row, col=column)
 
+
+def coords_from_point(point):
+    return '%s%d' % (
+        COLS[point.col - 1],
+        point.row
+    )
+
+
+
