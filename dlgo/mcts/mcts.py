@@ -84,8 +84,31 @@ class MCTSAgent(agent.Agent):
 
     def select_move(self, game_state):
         root_node = MCTSNode(game_state)
+        root_node = self._create_markov_tree(root_node, self.num_rounds)
 
-        for i in range(self.num_rounds):
+        scored_moves = [
+            (child.winning_frac(game_state.next_player), child.move, child.num_rollouts)
+            for child in root_node.children
+        ]
+        scored_moves.sort(key=lambda x: x[0], reverse=True)
+        for s, m, n in scored_moves[:10]:
+            print('%s - %.3f (%d)' % (m, s, n))
+
+        best_move = self._get_best_move(game_state, root_node)
+        return best_move
+
+    def _get_best_move(self, game_state, root_node):
+        best_move = None
+        best_winning_percentage = -1.0
+        for child in root_node.children:
+            child_winning_percentage = child.winning_frac(game_state.next_player)
+            if child_winning_percentage > best_winning_percentage:
+                best_winning_percentage = child_winning_percentage
+                best_move = child.move
+        return best_move
+
+    def _create_markov_tree(self, root_node, num_rounds):
+        for i in range(num_rounds):
             node = root_node
             while (not node.can_add_child()) and (not node.is_terminal()):
                 node = self.select_child(node)
@@ -98,24 +121,7 @@ class MCTSAgent(agent.Agent):
             while node is not None:
                 node.record_win(winner)
                 node = node.parent
-
-        scored_moves = [
-            (child.winning_frac(game_state.next_player), child.move, child.num_rollouts)
-            for child in root_node.children
-        ]
-        scored_moves.sort(key=lambda x: x[0], reverse=True)
-        for s, m, n in scored_moves[:10]:
-            print('%s - %.3f (%d)' % (m, s, n))
-
-        best_move = None
-        best_pct = -1.0
-        for child in root_node.children:
-            child_pct = child.winning_frac(game_state.next_player)
-            if child_pct > best_pct:
-                best_pct = child_pct
-                best_move = child.move
-
-        return best_move
+        return root_node
 
     def select_child(self, node):
         """
