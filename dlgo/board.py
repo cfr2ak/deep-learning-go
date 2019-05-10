@@ -1,5 +1,6 @@
 import copy
 from dlgo.types import Player, Point
+from dlgo.scoring import compute_game_result
 from dlgo import zobrist_hash
 
 
@@ -253,13 +254,13 @@ class GameState:
 
         return move_list
 
-    # def get_winner(self):
-    #     if not self.is_over():
-    #         return None
-    #     if self.last_move.is_resign:
-    #         return self.next_player
-    #     game_result = compute_game_result(self)
-    #     return game_result.winner
+    def get_winner(self):
+        if not self.is_over():
+            return None
+        if self.last_move.is_resign:
+            return self.next_player
+        game_result = compute_game_result(self)
+        return game_result.winner
 
 
 
