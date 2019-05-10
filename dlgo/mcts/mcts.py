@@ -2,6 +2,43 @@ import math
 import random
 
 from dlgo import agent
+from dlgo.types import Player
+from dlgo.utils import coords_from_point
+
+
+__all__ = [
+    'MCTSAgent',
+]
+
+
+def fmt(x):
+    if x is Player.black:
+        return 'B'
+    elif x is Player.white:
+        return 'W'
+    elif x.is_pass:
+        return 'pass'
+    elif x.is_resign:
+        return 'resign'
+    else:
+        return coords_from_point(x.oint)
+
+
+def show_tree(node, indent='', max_depth=3):
+    if max_depth < 0:
+        return
+    elif node is None:
+        return
+    elif node.parent is None:
+        print('%sroot' % indent)
+    else:
+        player = node.parent.game_state.next_player
+        move = node.move
+        print('%s%s %s %d %.3f' % (
+            indent, fmt(player), fmt(move),
+            node.num_rollouts,
+            node.winning_frac(player),
+        ))
 
 
 class MCTSNode(object):
