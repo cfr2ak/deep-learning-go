@@ -138,7 +138,7 @@ class MCTSAgent(agent.Agent):
 
         for child in node.children:
             win_percentage = child.winning_frac(node.game_state.next_player)
-            uct_score = get_uct_score(log_rollouts, child.num_rollouts, win_percentage, self.temperature)
+            uct_score = self._get_uct_score(log_rollouts, child.num_rollouts, win_percentage, self.temperature)
 
             if uct_score > best_score:
                 best_score = uct_score
@@ -156,10 +156,9 @@ class MCTSAgent(agent.Agent):
             game = game.apppy_move(bot_move)
         return game.winner()
 
-
-def get_uct_score(parent_rollouts, child_rollouts, win_percentage, temperature):
-    exploration = math.sqrt(math.log(parent_rollouts) / child_rollouts)
-    return win_percentage + temperature * exploration
+    def _get_uct_score(self, parent_rollouts, child_rollouts, win_percentage, temperature):
+        exploration = math.sqrt(math.log(parent_rollouts) / child_rollouts)
+        return win_percentage + temperature * exploration
 
 
 
