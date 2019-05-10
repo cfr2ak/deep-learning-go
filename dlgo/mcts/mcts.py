@@ -85,7 +85,11 @@ class MCTSAgent(agent.Agent):
     def select_move(self, game_state):
         root_node = MCTSNode(game_state)
         root_node = self._create_markov_tree(root_node, self.num_rounds)
+        self._print_top_ten_moves(game_state, root_node)
+        best_move = self._get_best_move(game_state, root_node)
+        return best_move
 
+    def _print_top_ten_moves(self, game_state, root_node):
         scored_moves = [
             (child.winning_frac(game_state.next_player), child.move, child.num_rollouts)
             for child in root_node.children
@@ -93,9 +97,6 @@ class MCTSAgent(agent.Agent):
         scored_moves.sort(key=lambda x: x[0], reverse=True)
         for s, m, n in scored_moves[:10]:
             print('%s - %.3f (%d)' % (m, s, n))
-
-        best_move = self._get_best_move(game_state, root_node)
-        return best_move
 
     def _get_best_move(self, game_state, root_node):
         best_move = None
