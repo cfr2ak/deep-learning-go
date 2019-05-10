@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
 
+import dlgo.gamestate
 from dlgo.encoder import get_encoder_by_name
 from dlgo import board as board
 from dlgo import mcts
@@ -10,7 +11,7 @@ from dlgo.utils import print_board, print_move
 def generate_game(board_size, rounds, max_moves, temperature):
     board_list, move_list = [], []
     encoder = get_encoder_by_name('oneplane', board_size)
-    game = board.GameState.new_game(board_size)
+    game = dlgo.gamestate.GameState.new_game(board_size)
     bot = mcts.MCTSAgent(rounds, temperature)
     num_moves = 0
 

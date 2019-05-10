@@ -1,3 +1,5 @@
+import dlgo.gamestate
+import dlgo.move
 from dlgo.agent import naive_ai
 from dlgo import board as board
 from dlgo import types
@@ -7,7 +9,7 @@ from six.moves import input
 
 def main():
     board_size = 9
-    game = board.GameState.new_game(board_size)
+    game = dlgo.gamestate.GameState.new_game(board_size)
     bot = naive_ai.RandomBot()
 
     while not game.is_over():
@@ -16,7 +18,7 @@ def main():
         if game.next_player is types.Player.black:
             human_move = input('-- ')
             point = point_from_coords(human_move.strip())
-            move = board.Move.play(point)
+            move = dlgo.move.Move.play(point)
         else:
             move = bot.select_move(game)
         print_move(game.next_player, move)

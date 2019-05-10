@@ -1,3 +1,4 @@
+import dlgo.gamestate
 from dlgo.agent import naive_ai
 from dlgo import board
 from dlgo import types
@@ -7,7 +8,7 @@ import time
 
 def main():
     board_size = 9
-    game = board.GameState.new_game(board_size)
+    game = dlgo.gamestate.GameState.new_game(board_size)
     bots = {
         types.Player.black: naive_ai.RandomBot(),
         types.Player.white: naive_ai.RandomBot()
