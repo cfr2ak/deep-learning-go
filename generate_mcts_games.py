@@ -46,4 +46,35 @@ def _input(game, encoder, bot, board_list, move_list):
     return move
 
 
+def main():
+    args = _parse_argument()
+    x_list = []
+    y_list = []
 
+    for i in range(args.num_games):
+        print('Generating game %d/%d...' % (i + 1, args.num_games))
+        x, y = generate_game(args.board_size, args.rounds, args.max_moves, args.temperature)
+        x_list.append(x)
+        y_list.append(y)
+
+    x = np.concatenate(x_list)
+    y = np.concatenate(y_list)
+
+    np.save(args.board_out, x)
+    np.save(args.move_out, y)
+
+
+def _parse_argument():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--board-size', '-b', type=int, default=9)
+    parser.add_argument('--rounds', '-r', type=int, default=1000)
+    parser.add_argument('--temperature', '-t', type=float, default=0.8)
+    parser.add_argument('--max-moves', '-m', type=int, default=60, help='Max moves per game.')
+    parser.add_argument('--num-games', '-n', type=int, default=10)
+    parser.add_argument('--board-out')
+    parser.add_argument('--move-out')
+    args = parser.parse_args()
+    return args
+
+if __name__ == '__main__ ':
+    main()
