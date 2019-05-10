@@ -1,5 +1,5 @@
 import copy
-from dlgo.types import Player
+from dlgo.types import Player, Point
 from dlgo import zobrist_hash
 
 
@@ -239,6 +239,28 @@ class GameState:
             not self.is_move_self_capture(self.next_player, move) and
             not self.does_move_violate_ko(self.next_player, move)
         )
+
+    def get_legal_moves(self):
+        move_list = []
+        for row in range(1, self.board.num_rows + 1):
+            for col in range(1, self.board.num_cols + 1):
+                move = Move.play(Point(row,  col))
+                if self.is_valid_move(move):
+                    move_list.append(move)
+
+        move_list.append(Move.pass_turn())
+        move_list.append(Move.resign())
+
+        return move_list
+
+    # def get_winner(self):
+    #     if not self.is_over():
+    #         return None
+    #     if self.last_move.is_resign:
+    #         return self.next_player
+    #     game_result = compute_game_result(self)
+    #     return game_result.winner
+
 
 
 
