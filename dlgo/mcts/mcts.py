@@ -52,7 +52,7 @@ class MCTSNode(object):
         }
         self.num_rollouts = 0
         self.children = []
-        self.unvisited_moves = game_state.legal_moves()
+        self.unvisited_moves = game_state.get_legal_moves()
 
     def get_random_children(self):
         index = random.randint(0, len(self.unvisited_moves) - 1)
@@ -153,7 +153,7 @@ class MCTSAgent(agent.Agent):
         }
         while not game.is_over():
             bot_move = bots[game.next_player].select_move(game)
-            game = game.apppy_move(bot_move)
+            game = game.apply_move(bot_move)
         return game.winner()
 
     def _get_uct_score(self, parent_rollouts, child_rollouts, win_percentage, temperature):
