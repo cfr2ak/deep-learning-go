@@ -46,3 +46,28 @@ class GameResult(namedtuple('GameResult', 'b w komi')):
             return 'W+%.1f' % (w - self.b)
 
 
+def evaluate_territory(board):
+    status = {}
+    for r in range(1, board.num_rows + 1):
+        for c in range(1, board.num_cols + 1):
+            point = Point(row=r, col=c)
+            if point in status:
+                continue
+            stone = board.get(point)
+            if stone is not None:
+                status[point] = stone
+            else:
+                group, neighbors = _collect_region(point, board)
+                if len(neighbors) == 1:
+                    neighbor_stone = neighbors.pop()
+                    stone_str = 'b' if neighbor_stone == Player.black else 'w'
+                    fill_with = 'territory_' + stone_str
+                else:
+                    fill_with = 'dame'
+
+                for pos in group:
+                    status[pos] = fill_with
+
+    return Territory(status)
+
+
