@@ -76,4 +76,25 @@ score = model.evaluate(X_test, Y_test, verbose=0)
 print('Test loss: ', score[0])
 print('Test accuracy: ', score[1])
 
+test_board = np.array([[
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 1, -1,  1, -1, 0, 0, 0, 0,
+    0, 1, -1,  1, -1, 0, 0, 0, 0,
+    0, 0,  1, -1,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+    0, 0,  0,  0,  0, 0, 0, 0, 0,
+]])
+move_probabilities = model.predict(test_board)[0]
+i = 0
+for row in range(9):
+    row_formatted = []
+    for col in range(9):
+        row_formatted.append('{:.3f}'.format(move_probabilities[i]))
+        i += 1
+    print(' '.join(row_formatted))
+
+
 
