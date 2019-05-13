@@ -3,6 +3,8 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Conv2D
 from keras.layers import Flatten
+from keras.layers import Dropout
+from keras.layers import MaxPooling2D
 
 
 np.random.seed(42)
@@ -24,38 +26,41 @@ model.add(
     Conv2D(
         filters=48,
         kernel_size=(3, 3),
-        activation='sigmoid',
+        activation='relu',
         padding='same',
         input_shape=input_shape
     )
 )
+model.add(Dropout(rate=0.5))
 model.add(
     Conv2D(
         48,
         (3, 3),
         padding='same',
-        activation='sigmoid'
+        activation='relu'
     )
 )
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(rate=0.5))
 model.add(Flatten())
 
 model.add(
     Dense(
         512,
-        activation='sigmoid'
+        activation='relu'
     )
 )
 model.add(
     Dense(
         size * size,
-        activation='sigmoid'
+        activation='softmax'
     )
 )
 model.summary()
 
 
 model.compile(
-    loss='mean_squared_error',
+    loss='categorical_crossentropy',
     optimizer='sgd',
     metrics=['accuracy']
 )
@@ -70,3 +75,5 @@ model.fit(
 score = model.evaluate(X_test, Y_test, verbose=0)
 print('Test loss: ', score[0])
 print('Test accuracy: ', score[1])
+
+
