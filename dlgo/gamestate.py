@@ -3,6 +3,7 @@ import copy
 from dlgo.board import Board
 from dlgo.move import Move
 from dlgo.types import Player, Point
+from dlgo.scoring import compute_game_result
 
 
 class GameState:

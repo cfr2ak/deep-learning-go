@@ -154,7 +154,7 @@ class MCTSAgent(agent.Agent):
         while not game.is_over():
             bot_move = bots[game.next_player].select_move(game)
             game = game.apply_move(bot_move)
-        return game.winner()
+        return game.get_winner()
 
     def _get_uct_score(self, parent_rollouts, child_rollouts, win_percentage, temperature):
         exploration = math.sqrt(math.log(parent_rollouts) / child_rollouts)
