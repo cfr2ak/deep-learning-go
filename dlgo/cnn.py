@@ -25,7 +25,8 @@ model.add(
         filters=48,
         kernel_size=(3, 3),
         activation='sigmoid',
-        padding='same'
+        padding='same',
+        input_shape=input_shape
     )
 )
 model.add(
