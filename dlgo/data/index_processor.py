@@ -30,10 +30,13 @@ class KGSIndex:
     def _download_zip_files(self):
         if not os.path.isdir(self.data_directory):
             os.makedirs(self.data_directory)
-
         urls_to_download = self._get_urls_to_download()
         cores = multiprocessing.cpu_count()
         pool = multiprocessing.Pool(processes=cores)
+        self._parallel_download(pool, urls_to_download)
+
+    @staticmethod
+    def _parallel_download(pool, urls_to_download):
         try:
             it = pool.imap(worker, urls_to_download)
             for _ in it:
