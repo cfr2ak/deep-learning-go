@@ -15,6 +15,6 @@ def worker(url_and_target):
 
 
 class KGSIndex:
-    pass
-
+    def __init__(self):
+        pass
 
