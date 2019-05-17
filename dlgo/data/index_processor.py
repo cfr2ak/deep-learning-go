@@ -58,7 +58,22 @@ class KGSIndex:
                 urls_to_download.append((url, self.data_directory + '/' + file_name))
         return urls_to_download
 
-
+    def _create_index_page_not_exist(self):
+        if os.path.isfile(self.index_page):
+            print('>>> Reading cached index page')
+            index_file = open(self.index_page, 'r')
+            index_contents = index_file.read()
+            index_file.close()
+        else:
+            print('>>> Downloading index page')
+            fp = urlopen(self.kgs_url)
+            data = six.text_type(fp.read())
+            fp.close()
+            index_contents = data
+            index_file = open(self.index_page, 'w')
+            index_file.write(index_contents)
+            index_file.close()
+        return index_contents
 
 
 
