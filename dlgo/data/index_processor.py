@@ -27,7 +27,7 @@ class KGSIndex:
         self.urls = []
         self.load_index()
 
-    def _download_zip_files(self):
+    def download_zip_files(self):
         if not os.path.isdir(self.data_directory):
             os.makedirs(self.data_directory)
         urls_to_download = self._get_urls_to_download()
@@ -75,10 +75,23 @@ class KGSIndex:
             index_file.close()
         return index_contents
 
+    def load_index(self):
+        index_contents = self._create_index_page_not_exist()
+        split_page = [item for item in index_contents.split('<a href="') if item.startswith('https://')]
+        for item in split_page:
+            download_url = item.split('">Download')[0]
+            if download_url.endswith('.tar.gz'):
+                self.urls.append(download_url)
+        for url in self.urls:
+            filename = os.path.basename(url)
+            split_file_name = filename.split('-')
+            num_games = int(split_file_name[len(split_file_name) - 2])
+            print(filename + ' ' + str(num_games))
+            self.file_infos.append({'url': url, 'filename': filename, 'num_games': num_games})
 
 
-
-
-
+if __name__ == '__main__':
+    index = KGSIndex()
+    index.download_zip_files()
 
 
